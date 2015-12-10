@@ -68,7 +68,7 @@ final class LocationCalloutView: UIView {
         sharedInstance.loadingView.startAnimating()
         sharedInstance.wrapperView.addSubview(sharedInstance.loadingView)
         
-        sharedInstance.bubbleImageView = UIImageView(image: UIImage(named: "map-callout-leg"))
+        sharedInstance.bubbleImageView = UIImageView(image: UIImage(named: "map-callout-leg", inBundle: LocationPicker.frameworkBundle(), compatibleWithTraitCollection: nil))
         sharedInstance.bubbleImageView.sizeToFit()
         sharedInstance.bubbleImageView.center = CGPoint(x: sharedInstance.wrapperView.frame.width/2, y: sharedInstance.wrapperView.frame.height + sharedInstance.bubbleImageView.frame.height/2 - 2)
         sharedInstance.addSubview(sharedInstance.bubbleImageView)

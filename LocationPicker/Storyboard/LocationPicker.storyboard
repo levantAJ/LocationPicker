@@ -85,7 +85,6 @@
                             </constraints>
                         </view>
                         <barButtonItem key="rightBarButtonItem" title="Cancel" id="kns-Xx-qbV">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="cancelButtonTapped:" destination="x18-Tr-Q8V" id="lyl-C4-PXA"/>
                             </connections>
@@ -105,10 +104,10 @@
             </objects>
             <point key="canvasLocation" x="6418" y="1819"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Location Picker Navigation Controller-->
         <scene sceneID="Dt6-rH-eFF">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="4Ot-UM-NYo" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="LocationPickerNavigationController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="4Ot-UM-NYo" customClass="LocationPickerNavigationController" sceneMemberID="viewController">
                     <toolbarItems/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="FC3-OL-sC0">

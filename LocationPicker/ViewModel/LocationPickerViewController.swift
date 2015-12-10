@@ -22,7 +22,6 @@ public final class LocationPickerViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var cancelButton: UIBarButtonItem!
-    @IBOutlet weak var currentLocationBottomConstraint: NSLayoutConstraint!
     
     var pinView: MKPinAnnotationView!
     var calloutView: LocationCalloutView!
@@ -63,13 +62,13 @@ public final class LocationPickerViewController: UIViewController {
         setupPinView()
         setupCalloutView()
         setupSearchBar()
-        setUpTableView()
+        setupTableView()
     }
     
     override public func viewWillAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        let center = CGPoint(x: view.bounds.width/2, y: view.bounds.height/2)
-        pinView.center = CGPointMake(center.x + 8.1, center.y - pinView.frame.height/2 + Constants.LocationPickerViewController.PinTopPadding)
+        let center = CGPoint(x: mapView.frame.width/2, y: mapView.frame.height/2 + pinView.frame.height - Constants.LocationPickerViewController.PinViewSpace)
+        pinView.center = CGPointMake(center.x + Constants.LocationPickerViewController.PinViewSpace, center.y - pinView.frame.height/2 + Constants.LocationPickerViewController.PinTopPadding)
         ellipsisLayer.position = center
         calloutView.center = CGPointMake(center.x, center.y - calloutView.frame.height - Constants.LocationPickerViewController.PinTopPadding)
         guard let coordinate = coordinate where !coordinate.isZero else { return }
@@ -84,7 +83,7 @@ public final class LocationPickerViewController: UIViewController {
         locationPickerViewModel.removeListeners()
     }
     
-    private func setUpTableView() {
+    private func setupTableView() {
         tableView.hidden = true
         tableView.delegate = self
         tableView.dataSource = self
@@ -124,7 +123,7 @@ public final class LocationPickerViewController: UIViewController {
     private func setupSearchBar() {
         searchBar.delegate = self
         searchBar.enableSearchBar()
-        searchBar.setTextColor(UIColor.whiteColor())
+        searchBar.setTextColor(UIColor.blackColor())
     }
 }
 
@@ -260,7 +259,9 @@ extension Constants {
     struct LocationPickerViewController {
         static let PinTopPadding = CGFloat(4)
         static let PinAnimatedSpace = CGFloat(15)
+        static let PinViewSpace = CGFloat(8.1)
         static let PinViewFootSize = CGSize(width: 10, height: 5)
         static let DropMapSeachCell = "DropMapSeachCell"
+        static let Identifier = "LocationPickerViewController"
     }
 }
