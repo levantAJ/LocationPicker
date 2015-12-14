@@ -11,12 +11,12 @@ import ObjectMapper
 import CoreLocation
 import Utils
 
-final class GoogleApiService {
-    static let sharedInstance = GoogleApiService()
+public final class GoogleApiService {
+    public static let sharedInstance = GoogleApiService()
     
-    func searchAddress(address: String,
+    public func searchAddress(address: String,
         success: ([Location]) -> Void,
-        failure: (NSError?) -> Void) {
+        failure: ((NSError?) -> Void)?) {
             let url = urlWithAddress(address)
             Alamofire.request(.GET,
                 url,
@@ -25,18 +25,20 @@ final class GoogleApiService {
                 headers: nil).responseJSON { (_, response, result) -> Void in
                     switch result {
                     case .Failure(_, let error):
-                        failure(error as NSError)
+                        failure?(error as NSError)
                     case .Success(let json):
                         if let json = json as? [String: AnyObject] {
                             success(Location.fromGoogleJsonArray(json))
+                        } else {
+                            failure?(APIError.NoBodyFound.foundationError())
                         }
                     }
             }
     }
     
-    func addressByCoordinate(coor: CLLocationCoordinate2D,
+    public func addressByCoordinate(coor: CLLocationCoordinate2D,
         success: (String) -> Void,
-        failure: (NSError) -> Void) {
+        failure: ((NSError) -> Void)?) {
             let url = urlWithCoordinate(coor)
             Alamofire.request(.GET,
                 url,
@@ -45,29 +47,29 @@ final class GoogleApiService {
                 headers: nil).responseJSON { (_, response, result) -> Void in
                     switch result {
                     case .Failure(_, let error):
-                        failure(error as NSError)
+                        failure?(error as NSError)
                     case .Success(let json):
                         if let json = json as? [String: AnyObject] {
                             let locations = Location.fromGoogleJsonArray(json)
                             if locations.count != 0 {
                                 success(locations[0].address)
                             } else {
-                                failure(APIError.NoBodyFound.foundationError())
+                                failure?(APIError.NoBodyFound.foundationError())
                             }
                         }
                     }
             }
     }
     
-    func navigateFrom(fromCoordiante: CLLocationCoordinate2D = CLLocationCoordinate2D(),
+    public func navigateFrom(fromCoordiante: CLLocationCoordinate2D = CLLocationCoordinate2D(),
         toCoordiante: CLLocationCoordinate2D = CLLocationCoordinate2D(),
         waypoints: [CLLocationCoordinate2D] = [CLLocationCoordinate2D](),
         success: (String) -> Void,
-        failure: (NSError?) -> Void) {
+        failure: ((NSError?) -> Void)?) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)) { () -> Void in
                 guard let url = NSURL(string: self.urlFromCoordinate(fromCoordiante, toCoordinate: toCoordiante, waypoints: waypoints)) else {
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        failure(APIError.Unspecified.foundationError())
+                        failure?(APIError.Unspecified.foundationError())
                     })
                     return
                 }
@@ -83,7 +85,7 @@ final class GoogleApiService {
                                 string = String(data: data!, encoding: NSUTF8StringEncoding)!
                                 success(string)
                             case .Failure(_, let error):
-                                failure(error as NSError)
+                                failure?(error as NSError)
                             }
                         })
                     })
@@ -119,8 +121,8 @@ final class GoogleApiService {
     }
 }
 
-extension Constants {
-    struct GoogleAPI {
+public extension Constants {
+    public struct GoogleAPI {
         static let NumberAceptedWaypoints = 6
         static let Place = "https://maps.googleapis.com/maps/api/geocode/json?address="
         static let Address = "http://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=false&language=%@"

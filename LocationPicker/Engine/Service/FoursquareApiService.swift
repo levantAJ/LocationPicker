@@ -10,10 +10,10 @@ import CoreLocation
 import Alamofire
 import Utils
 
-final class FoursquareApiService {
+public final class FoursquareApiService {
     static let sharedInstance = FoursquareApiService()
     
-    func searchAddress(address: String, centerCoor: CLLocationCoordinate2D, success: ([Location]) -> Void, failure: (NSError) -> Void) {
+    public func searchAddress(address: String, centerCoor: CLLocationCoordinate2D, success: ([Location]) -> Void, failure: (NSError) -> Void) {
         let url = urlFromCoordinate(centerCoor, address: address)
         Alamofire.request(.GET,
             url,
@@ -40,8 +40,8 @@ extension FoursquareApiService {
     }
 }
 
-extension Constants {
-    struct FoursquareAPI {
+public extension Constants {
+    public struct FoursquareAPI {
         static let Place = "https://api.foursquare.com/v2/venues/search?ll=%f,%f&query=%@&oauth_token=HNUKR3RBH4ILYXT25QFJ4RPPZ3WVPMIC3IG2L51W0G5WUUSI&v=20140511"
     }
 }
