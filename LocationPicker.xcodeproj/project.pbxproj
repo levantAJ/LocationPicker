@@ -19,6 +19,8 @@
 		3D072F541C188E0700B47749 /* FoursquareApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F521C188E0700B47749 /* FoursquareApiService.swift */; };
 		3D072F551C188E0700B47749 /* GoogleApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F531C188E0700B47749 /* GoogleApiService.swift */; };
 		3D072F591C18900400B47749 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F581C18900400B47749 /* Errors.swift */; };
+		3D2F1B391C21A14200811B1A /* GooglePolylineUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F1B381C21A14200811B1A /* GooglePolylineUtils.swift */; };
+		3D2F1B401C21A7A200811B1A /* MKPolyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F1B3F1C21A7A200811B1A /* MKPolyline.swift */; };
 		3DAEBDBA1C19C7EF00EF73D3 /* LocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DAEBDB91C19C7EF00EF73D3 /* LocationPicker.swift */; };
 		802F2F45A559AF62F0448226 /* Pods_LocationPicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FAB8E429947B7BBE6E846EC /* Pods_LocationPicker.framework */; };
 /* End PBXBuildFile section */
@@ -49,6 +51,8 @@
 		3D072F521C188E0700B47749 /* FoursquareApiService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoursquareApiService.swift; sourceTree = "<group>"; };
 		3D072F531C188E0700B47749 /* GoogleApiService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleApiService.swift; sourceTree = "<group>"; };
 		3D072F581C18900400B47749 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		3D2F1B381C21A14200811B1A /* GooglePolylineUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GooglePolylineUtils.swift; sourceTree = "<group>"; };
+		3D2F1B3F1C21A7A200811B1A /* MKPolyline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MKPolyline.swift; sourceTree = "<group>"; };
 		3DAEBDB91C19C7EF00EF73D3 /* LocationPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationPicker.swift; sourceTree = "<group>"; };
 		606751588849B4926208EA61 /* Pods-LocationPicker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LocationPicker.release.xcconfig"; path = "Pods/Target Support Files/Pods-LocationPicker/Pods-LocationPicker.release.xcconfig"; sourceTree = "<group>"; };
 		6FAB8E429947B7BBE6E846EC /* Pods_LocationPicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LocationPicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,6 +125,7 @@
 		3D072F371C18861400B47749 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				3D2F1B3E1C21A78B00811B1A /* Extension */,
 				3D072F571C188FEB00B47749 /* Utility */,
 				3D072F381C18861400B47749 /* Persistence */,
 				3D072F391C18861400B47749 /* Service */,
@@ -175,8 +180,17 @@
 			isa = PBXGroup;
 			children = (
 				3D072F581C18900400B47749 /* Errors.swift */,
+				3D2F1B381C21A14200811B1A /* GooglePolylineUtils.swift */,
 			);
 			path = Utility;
+			sourceTree = "<group>";
+		};
+		3D2F1B3E1C21A78B00811B1A /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				3D2F1B3F1C21A7A200811B1A /* MKPolyline.swift */,
+			);
+			path = Extension;
 			sourceTree = "<group>";
 		};
 		8341E61249A4294BF4F1E546 /* Pods */ = {
@@ -342,6 +356,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D072F4B1C18886E00B47749 /* LocationPickerViewModel.swift in Sources */,
+				3D2F1B401C21A7A200811B1A /* MKPolyline.swift in Sources */,
 				3D072F4A1C18886E00B47749 /* LocationPickerViewController.swift in Sources */,
 				3D072F4D1C18897700B47749 /* Location.swift in Sources */,
 				3D072F551C188E0700B47749 /* GoogleApiService.swift in Sources */,
@@ -349,6 +364,7 @@
 				3D072F541C188E0700B47749 /* FoursquareApiService.swift in Sources */,
 				3DAEBDBA1C19C7EF00EF73D3 /* LocationPicker.swift in Sources */,
 				3D072F591C18900400B47749 /* Errors.swift in Sources */,
+				3D2F1B391C21A14200811B1A /* GooglePolylineUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2,6 +2,7 @@ PODS:
   - Alamofire (2.0.0-beta.3)
   - ObjectMapper (0.18)
   - Observable (0.0.1)
+  - Polyline (3.0.0)
   - Realm (0.96.3):
     - Realm/Headers (= 0.96.3)
   - Realm/Headers (0.96.3)
@@ -13,6 +14,7 @@ DEPENDENCIES:
   - Alamofire (from `https://github.com/Alamofire/Alamofire.git`, commit `39e5ecb98c8cab9b258d87fdbe33d7cfe7765326`)
   - ObjectMapper (from `https://github.com/Hearst-DD/ObjectMapper.git`, commit `c9b53ad38a17847d2f68baf4e0ef76a0bfea476d`)
   - Observable (from `https://github.com/levantAJ/Observable.git`, commit `02b5b0f6cd52164e1f19709056d5d01f2ad7c5b9`)
+  - Polyline (~> 3.0)
   - Realm
   - RealmSwift
   - Utils (from `../Utils`)
@@ -45,6 +47,7 @@ SPEC CHECKSUMS:
   Alamofire: 39dddb7d3725d1771b1d2f7099c8bd45bd83ffbb
   ObjectMapper: 0dec0fec1e10b707ba94dd0891580a582ab84cf0
   Observable: 8d559431b212bae6b99bbba766f0af28d073170e
+  Polyline: 18026fd6675f754a15e70b4fd7ca01d0d156b6d7
   Realm: 145d3cdf78a03aee71bde5381ad7e542bd541720
   RealmSwift: aab84968aad662f61f36473d1aea019f63481505
   Utils: 088820dd340dc6a8afc3ba822253877b1b88d2ff
