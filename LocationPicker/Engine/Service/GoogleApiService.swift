@@ -22,17 +22,18 @@ public final class GoogleApiService {
                 url,
                 parameters: nil,
                 encoding: .JSON,
-                headers: nil).responseJSON { (_, response, result) -> Void in
-                    switch result {
-                    case .Failure(_, let error):
-                        failure?(error as NSError)
-                    case .Success(let json):
-                        if let json = json as? [String: AnyObject] {
-                            success(Location.fromGoogleJsonArray(json))
-                        } else {
-                            failure?(APIError.NoBodyFound.foundationError())
-                        }
+                headers: nil)
+            .responseJSON { (response) -> Void in
+                switch response.result {
+                case .Failure(let error):
+                    failure?(error)
+                case .Success(let json):
+                    if let json = json as? [String: AnyObject] {
+                        success(Location.fromGoogleJsonArray(json))
+                    } else {
+                        failure?(APIError.NoBodyFound.foundationError())
                     }
+                }
             }
     }
     
@@ -44,20 +45,21 @@ public final class GoogleApiService {
                 url,
                 parameters: nil,
                 encoding: .JSON,
-                headers: nil).responseJSON { (_, response, result) -> Void in
-                    switch result {
-                    case .Failure(_, let error):
-                        failure?(error as NSError)
-                    case .Success(let json):
-                        if let json = json as? [String: AnyObject] {
-                            let locations = Location.fromGoogleJsonArray(json)
-                            if locations.count != 0 {
-                                success(locations[0].address)
-                            } else {
-                                failure?(APIError.NoBodyFound.foundationError())
-                            }
+                headers: nil)
+            .responseJSON { (response) -> Void in
+                switch response.result {
+                case .Failure(let error):
+                    failure?(error)
+                case .Success(let json):
+                    if let json = json as? [String: AnyObject] {
+                        let locations = Location.fromGoogleJsonArray(json)
+                        if locations.count != 0 {
+                            success(locations[0].address)
+                        } else {
+                            failure?(APIError.NoBodyFound.foundationError())
                         }
                     }
+                }
             }
     }
     
@@ -77,18 +79,19 @@ public final class GoogleApiService {
                     url,
                     parameters: nil,
                     encoding: .URL,
-                    headers: nil).responseString(completionHandler: { (_, response, result) -> Void in
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            switch result {
-                            case .Success(var string):
-                                let data = string.dataUsingEncoding(NSUTF8StringEncoding)
-                                string = String(data: data!, encoding: NSUTF8StringEncoding)!
-                                success(string)
-                            case .Failure(_, let error):
-                                failure?(error as NSError)
-                            }
-                        })
+                    headers: nil)
+                .responseString(completionHandler: { (response) -> Void in
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        switch response.result {
+                        case .Success(var string):
+                            let data = string.dataUsingEncoding(NSUTF8StringEncoding)
+                            string = String(data: data!, encoding: NSUTF8StringEncoding)!
+                            success(string)
+                        case .Failure(let error):
+                            failure?(error)
+                        }
                     })
+                })
             }
     }
     

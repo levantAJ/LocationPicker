@@ -19,15 +19,16 @@ public final class FoursquareApiService {
             url,
             parameters: nil,
             encoding: .JSON,
-            headers: nil).responseJSON { (_, response, result) -> Void in
-                switch result {
-                case .Failure(_, let error):
-                    failure(error as NSError)
-                case .Success(let json):
-                    if let json = json as? [String: AnyObject] {
-                        success(Location.fromFoursquareJsonArray(json))
-                    }
+            headers: nil)
+        .responseJSON { (response) -> Void in
+            switch response.result {
+            case .Failure(let error):
+                failure(error)
+            case .Success(let json):
+                if let json = json as? [String: AnyObject] {
+                    success(Location.fromFoursquareJsonArray(json))
                 }
+            }
         }
     }
 }

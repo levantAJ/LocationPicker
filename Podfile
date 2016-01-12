@@ -12,7 +12,7 @@ target 'LocationPicker' do
     pod 'Observable', :git => 'https://github.com/levantAJ/Observable.git', :commit => '02b5b0f6cd52164e1f19709056d5d01f2ad7c5b9'
     #Open source
     pod 'Polyline', '~> 3.0'
-    pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :commit=> '39e5ecb98c8cab9b258d87fdbe33d7cfe7765326'
+    pod 'Alamofire', '~> 3.0'
     pod 'ObjectMapper', :git => 'https://github.com/Hearst-DD/ObjectMapper.git', :commit => 'c9b53ad38a17847d2f68baf4e0ef76a0bfea476d'
     pod 'Realm'
     pod 'RealmSwift'

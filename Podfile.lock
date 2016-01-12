@@ -1,5 +1,5 @@
 PODS:
-  - Alamofire (2.0.0-beta.3)
+  - Alamofire (3.1.4)
   - ObjectMapper (0.18)
   - Observable (0.0.1)
   - Polyline (3.0.0)
@@ -11,7 +11,7 @@ PODS:
   - Utils (0.0.1)
 
 DEPENDENCIES:
-  - Alamofire (from `https://github.com/Alamofire/Alamofire.git`, commit `39e5ecb98c8cab9b258d87fdbe33d7cfe7765326`)
+  - Alamofire (~> 3.0)
   - ObjectMapper (from `https://github.com/Hearst-DD/ObjectMapper.git`, commit `c9b53ad38a17847d2f68baf4e0ef76a0bfea476d`)
   - Observable (from `https://github.com/levantAJ/Observable.git`, commit `02b5b0f6cd52164e1f19709056d5d01f2ad7c5b9`)
   - Polyline (~> 3.0)
@@ -20,9 +20,6 @@ DEPENDENCIES:
   - Utils (from `../Utils`)
 
 EXTERNAL SOURCES:
-  Alamofire:
-    :commit: 39e5ecb98c8cab9b258d87fdbe33d7cfe7765326
-    :git: https://github.com/Alamofire/Alamofire.git
   ObjectMapper:
     :commit: c9b53ad38a17847d2f68baf4e0ef76a0bfea476d
     :git: https://github.com/Hearst-DD/ObjectMapper.git
@@ -33,9 +30,6 @@ EXTERNAL SOURCES:
     :path: "../Utils"
 
 CHECKOUT OPTIONS:
-  Alamofire:
-    :commit: 39e5ecb98c8cab9b258d87fdbe33d7cfe7765326
-    :git: https://github.com/Alamofire/Alamofire.git
   ObjectMapper:
     :commit: c9b53ad38a17847d2f68baf4e0ef76a0bfea476d
     :git: https://github.com/Hearst-DD/ObjectMapper.git
@@ -44,7 +38,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/levantAJ/Observable.git
 
 SPEC CHECKSUMS:
-  Alamofire: 39dddb7d3725d1771b1d2f7099c8bd45bd83ffbb
+  Alamofire: fbc829692f351fa1d8a31dd75fd7f7f56fea31fb
   ObjectMapper: 0dec0fec1e10b707ba94dd0891580a582ab84cf0
   Observable: 8d559431b212bae6b99bbba766f0af28d073170e
   Polyline: 18026fd6675f754a15e70b4fd7ca01d0d156b6d7

@@ -12,4 +12,8 @@ Pod::Spec.new do |s|
   s.platform = :ios
   s.ios.deployment_target = '8.0'
   s.requires_arc = true
+  s.dependency 'Realm', '0.97.0'
+  s.dependency 'RealmSwift', '0.97.0'
+  s.dependency 'Alamofire', '~> 3.0'
+  s.dependency 'ObjectMapper', '0.18'
 end
