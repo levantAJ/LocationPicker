@@ -15,7 +15,7 @@
 		3D072F471C18885C00B47749 /* LocationCalloutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F461C18885C00B47749 /* LocationCalloutView.swift */; };
 		3D072F4A1C18886E00B47749 /* LocationPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F481C18886E00B47749 /* LocationPickerViewController.swift */; };
 		3D072F4B1C18886E00B47749 /* LocationPickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F491C18886E00B47749 /* LocationPickerViewModel.swift */; };
-		3D072F4D1C18897700B47749 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F4C1C18897700B47749 /* Location.swift */; };
+		3D072F4D1C18897700B47749 /* LPLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F4C1C18897700B47749 /* LPLocation.swift */; };
 		3D072F541C188E0700B47749 /* FoursquareApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F521C188E0700B47749 /* FoursquareApiService.swift */; };
 		3D072F551C188E0700B47749 /* GoogleApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F531C188E0700B47749 /* GoogleApiService.swift */; };
 		3D072F591C18900400B47749 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D072F581C18900400B47749 /* Errors.swift */; };
@@ -48,7 +48,7 @@
 		3D072F461C18885C00B47749 /* LocationCalloutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationCalloutView.swift; sourceTree = "<group>"; };
 		3D072F481C18886E00B47749 /* LocationPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationPickerViewController.swift; sourceTree = "<group>"; };
 		3D072F491C18886E00B47749 /* LocationPickerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationPickerViewModel.swift; sourceTree = "<group>"; };
-		3D072F4C1C18897700B47749 /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		3D072F4C1C18897700B47749 /* LPLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LPLocation.swift; sourceTree = "<group>"; };
 		3D072F521C188E0700B47749 /* FoursquareApiService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoursquareApiService.swift; sourceTree = "<group>"; };
 		3D072F531C188E0700B47749 /* GoogleApiService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleApiService.swift; sourceTree = "<group>"; };
 		3D072F581C18900400B47749 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
@@ -138,7 +138,7 @@
 		3D072F381C18861400B47749 /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
-				3D072F4C1C18897700B47749 /* Location.swift */,
+				3D072F4C1C18897700B47749 /* LPLocation.swift */,
 			);
 			path = Persistence;
 			sourceTree = "<group>";
@@ -362,7 +362,7 @@
 				3D2F1B401C21A7A200811B1A /* MKPolyline.swift in Sources */,
 				3D561AA61C548796001A97D5 /* LocationPickerDataSource.swift in Sources */,
 				3D072F4A1C18886E00B47749 /* LocationPickerViewController.swift in Sources */,
-				3D072F4D1C18897700B47749 /* Location.swift in Sources */,
+				3D072F4D1C18897700B47749 /* LPLocation.swift in Sources */,
 				3D072F551C188E0700B47749 /* GoogleApiService.swift in Sources */,
 				3D072F471C18885C00B47749 /* LocationCalloutView.swift in Sources */,
 				3D072F541C188E0700B47749 /* FoursquareApiService.swift in Sources */,

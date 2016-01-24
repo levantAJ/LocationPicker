@@ -10,13 +10,35 @@ import CoreLocation
 import Observable
 import Utils
 
-final class LocationPickerViewModel {
-    var locations = Observable(value: ["": [Location](), "RESULTS": [Location]()])
-    var address = Observable(value: "")
-    var error = Observable(value: APIError.Unspecified.foundationError())
+public enum SearchResultType: Int {
+    case Instance
+    case Recently
+    case Remote
     
-    func removeListeners() {
-        error.removeListener()
+    func localizedString() -> String {
+        switch self {
+        case .Instance:
+            return ""
+        case .Recently:
+            return NSLocalizedString("Recently", comment: "")
+        case .Remote:
+            return NSLocalizedString("Remote", comment: "")
+        }
+    }
+}
+
+final class LocationPickerViewModel: BaseViewModel {
+    var locations = Observable(value: OrderedDictionary<SearchResultType, [LPLocation]>())
+    var address = Observable(value: "")
+    
+    override init() {
+        locations.value?[SearchResultType.Instance] = [LPLocation]()
+        locations.value?[SearchResultType.Recently] = [LPLocation]()
+        locations.value?[SearchResultType.Remote] = [LPLocation]()
+    }
+    
+    override func removeListeners() {
+        super.removeListeners()
         locations.removeListener()
         address.removeListener()
     }
@@ -24,48 +46,50 @@ final class LocationPickerViewModel {
     func searchAddress(address: String, coordinate: CLLocationCoordinate2D) {
         if !address.isEmpty {
             if Array(arrayLiteral: address)[0].tryParseInt() {
-                FoursquareApiService.sharedInstance.searchAddress(address, centerCoor: coordinate, success: { (locations) -> Void in
-                    self.locations.value = self.instancelocationsFromSemaphore(locations)
-                    self.error.value = nil
-                    }, failure: { (error) -> Void in
-                        self.error.value = error
+                FoursquareApiService.sharedInstance.searchAddress(address, centerCoor: coordinate, success: { [weak self] (locations) -> Void in
+                    self?.locations.value = self?.instancelocationsFromSemaphore(locations)
+                    self?.handleError(nil)
+                    }, failure: { [weak self] (error) -> Void in
+                        self?.handleError(error)
                 })
             } else {
-                GoogleApiService.sharedInstance.searchAddress(address, success: { (locations) -> Void in
-                    self.locations.value = self.instancelocationsFromSemaphore(locations)
-                    self.error.value = nil
-                    }, failure: { (error) -> Void in
-                        self.error.value = error
+                GoogleApiService.sharedInstance.searchAddress(address, success: { [weak self] (locations) -> Void in
+                    self?.locations.value = self?.instancelocationsFromSemaphore(locations)
+                    self?.handleError(nil)
+                    }, failure: { [weak self] (error) -> Void in
+                        self?.handleError(error)
                 })
             }
         } else {
-            locations.value = instancelocationsFromSemaphore([Location]())
+            locations.value = instancelocationsFromSemaphore([LPLocation]())
         }
     }
     
     func addressFromCoordinate(coordinate: CLLocationCoordinate2D) {
         GoogleApiService.sharedInstance.addressByCoordinate(coordinate, success: { [weak self] (address) -> Void in
             self?.address.value = address
-            self?.error.value = nil
+            self?.handleError(nil)
             }) { [weak self] (error) -> Void in
                 self?.address.value = NSLocalizedString("Could not get address, try again!", comment: "")
-                self?.error.value = error
+                self?.handleError(error)
         }
     }
     
-    private func instancelocationsFromSemaphore(locations: [Location]) -> [String: [Location]] {
-        return [
-            "": Location.instanceLocations(),
-            "RESULTS": locations
-        ]
+    private func instancelocationsFromSemaphore(locations: [LPLocation]) -> OrderedDictionary<SearchResultType, [LPLocation]> {
+        var results = OrderedDictionary<SearchResultType, [LPLocation]>()
+        results[SearchResultType.Instance] = LPLocation.instanceLocations()
+        results[SearchResultType.Recently] = LPLocation.recentlyLocations() ?? []
+        results[SearchResultType.Remote] = locations
+        return results
     }
     
-    func locationAtIndexPath(indexPath: NSIndexPath) -> Location? {
-        if let locations = locations.value,
-            array = locations.valueAtIndex(indexPath.section) as? [Location]
-            where indexPath.row < array.count {
-                return array[indexPath.row]
-        }
-        return nil
+    func locationAtIndexPath(indexPath: NSIndexPath) -> LPLocation? {
+        guard let locations = locations.value, array = locations[indexPath.section] where indexPath.row < array.count else { return nil }
+        return array[indexPath.row]
+    }
+    
+    func numberOfLocationsInSection(section: Int) -> Int {
+        guard let locations = locations.value, count = locations[section]?.count else { return 0 }
+        return count
     }
 }

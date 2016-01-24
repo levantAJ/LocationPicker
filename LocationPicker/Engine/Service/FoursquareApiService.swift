@@ -13,7 +13,7 @@ import Utils
 public final class FoursquareApiService {
     static let sharedInstance = FoursquareApiService()
     
-    public func searchAddress(address: String, centerCoor: CLLocationCoordinate2D, success: ([Location]) -> Void, failure: (NSError) -> Void) {
+    public func searchAddress(address: String, centerCoor: CLLocationCoordinate2D, success: ([LPLocation]) -> Void, failure: (NSError) -> Void) {
         let url = urlFromCoordinate(centerCoor, address: address)
         Alamofire.request(.GET,
             url,
@@ -26,7 +26,7 @@ public final class FoursquareApiService {
                 failure(error)
             case .Success(let json):
                 if let json = json as? [String: AnyObject] {
-                    success(Location.fromFoursquareJsonArray(json))
+                    success(LPLocation.fromFoursquareJsonArray(json))
                 }
             }
         }

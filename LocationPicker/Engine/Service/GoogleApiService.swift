@@ -15,7 +15,7 @@ public final class GoogleApiService {
     public static let sharedInstance = GoogleApiService()
     
     public func searchAddress(address: String,
-        success: ([Location]) -> Void,
+        success: ([LPLocation]) -> Void,
         failure: ((NSError?) -> Void)?) {
             let url = urlWithAddress(address)
             Alamofire.request(.GET,
@@ -29,7 +29,7 @@ public final class GoogleApiService {
                     failure?(error)
                 case .Success(let json):
                     if let json = json as? [String: AnyObject] {
-                        success(Location.fromGoogleJsonArray(json))
+                        success(LPLocation.fromGoogleJsonArray(json))
                     } else {
                         failure?(APIError.NoBodyFound.foundationError())
                     }
@@ -52,7 +52,7 @@ public final class GoogleApiService {
                     failure?(error)
                 case .Success(let json):
                     if let json = json as? [String: AnyObject] {
-                        let locations = Location.fromGoogleJsonArray(json)
+                        let locations = LPLocation.fromGoogleJsonArray(json)
                         if locations.count != 0 {
                             success(locations[0].address)
                         } else {

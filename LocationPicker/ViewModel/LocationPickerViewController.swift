@@ -49,7 +49,7 @@ public final class LocationPickerViewController: UIViewController {
         layer.miterLimit = 10.0
         layer.strokeColor = UIColor.grayColor().CGColor
         return layer
-        }()
+    }()
     
     public weak var delegate: LocationPickerViewControllerDelegate?
     public var coordinate: CLLocationCoordinate2D?
@@ -155,7 +155,7 @@ extension LocationPickerViewController: MKMapViewDelegate {
                 }
         }
     }
-  public func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+    public func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         ellipsisLayer.transform = CATransform3DIdentity
         UIView.animateWithDuration(0.25, animations: { () -> Void in
             self.pinView.center = CGPointMake(self.pinView.center.x, self.pinView.center.y + Constants.LocationPickerViewController.PinAnimatedSpace)
@@ -193,17 +193,13 @@ extension LocationPickerViewController: UITableViewDataSource {
     }
     
     public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let semaphores = locationPickerViewModel.locations.value,
-            array = semaphores.valueAtIndex(section) as? NSArray {
-                return array.count
-        }
-        return 0
+        return locationPickerViewModel.numberOfLocationsInSection(section)
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(Constants.LocationPickerViewController.DropMapSeachCell, forIndexPath: indexPath)
         guard let location = locationPickerViewModel.locationAtIndexPath(indexPath) else { return cell }
-        switch location.locationType {
+        switch location.locationType() {
         case .CurrentLocation:
             cell.textLabel?.text = NSLocalizedString("Your current location", comment: "")
             cell.imageView?.image = UIImage(named: "ic_current_location_non_bg")
@@ -227,17 +223,23 @@ extension LocationPickerViewController: UITableViewDelegate {
         searchBar.resignFirstResponder()
         tableView.hidden = true
         guard let location = locationPickerViewModel.locationAtIndexPath(indexPath) else { return }
-        switch location.locationType {
+        switch location.locationType() {
         case .CurrentLocation:
-            location.coordinate = mapView.userLocation.coordinate
+            location.latitude = mapView.userLocation.coordinate.latitude
+            location.longitude = mapView.userLocation.coordinate.longitude
             mapView.setUserTrackingMode(.Follow, animated: true)
         case .Drop:
-            location.coordinate = mapView.centerCoordinate
+            location.latitude = mapView.centerCoordinate.latitude
+            location.longitude = mapView.centerCoordinate.longitude
             mapView.gotoLocation(mapView.centerCoordinate)
         default:
-            mapView.gotoLocation(location.coordinate)
+            mapView.gotoLocation(location.coordinate())
         }
-
+        
+    }
+    
+    public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return locationPickerViewModel.numberOfLocationsInSection(section) == 0 ? "" : SearchResultType(rawValue: section)?.localizedString()
     }
 }
 
@@ -265,6 +267,8 @@ extension LocationPickerViewController: LocationCalloutViewDelegate {
         guard let address = calloutView.address else { return }
         let coordinate = mapView.convertPoint(self.ellipsisLayer.position, toCoordinateFromView: mapView)
         delegate?.locationPickerViewController(self, seletedCoordinate: coordinate, selectedAddress: address)
+        let location = LPLocation(coordinate: coordinate, address: address)
+        location.update()
         navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
 }

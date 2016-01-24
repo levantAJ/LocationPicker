@@ -13,7 +13,7 @@ PODS:
 DEPENDENCIES:
   - Alamofire (~> 3.0)
   - ObjectMapper (from `https://github.com/Hearst-DD/ObjectMapper.git`, commit `c9b53ad38a17847d2f68baf4e0ef76a0bfea476d`)
-  - Observable (from `https://github.com/levantAJ/Observable.git`, commit `02b5b0f6cd52164e1f19709056d5d01f2ad7c5b9`)
+  - Observable (from `../../../Me/Observable`)
   - Polyline (~> 3.0)
   - Realm
   - RealmSwift
@@ -24,8 +24,7 @@ EXTERNAL SOURCES:
     :commit: c9b53ad38a17847d2f68baf4e0ef76a0bfea476d
     :git: https://github.com/Hearst-DD/ObjectMapper.git
   Observable:
-    :commit: 02b5b0f6cd52164e1f19709056d5d01f2ad7c5b9
-    :git: https://github.com/levantAJ/Observable.git
+    :path: "../../../Me/Observable"
   Utils:
     :path: "../../../Me/Utils"
 
@@ -33,9 +32,6 @@ CHECKOUT OPTIONS:
   ObjectMapper:
     :commit: c9b53ad38a17847d2f68baf4e0ef76a0bfea476d
     :git: https://github.com/Hearst-DD/ObjectMapper.git
-  Observable:
-    :commit: 02b5b0f6cd52164e1f19709056d5d01f2ad7c5b9
-    :git: https://github.com/levantAJ/Observable.git
 
 SPEC CHECKSUMS:
   Alamofire: fbc829692f351fa1d8a31dd75fd7f7f56fea31fb
