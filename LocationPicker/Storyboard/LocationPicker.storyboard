@@ -94,6 +94,8 @@
                     <connections>
                         <outlet property="cancelButton" destination="kns-Xx-qbV" id="Rrv-FS-SMf"/>
                         <outlet property="currentLocationButton" destination="tF5-0m-H78" id="PE3-TX-Wfz"/>
+                        <outlet property="currentLocationButtonHeightConstraint" destination="wmb-ON-Buc" id="syL-BA-Fh1"/>
+                        <outlet property="currentLocationButtonWidthConstraint" destination="FI6-HT-V1B" id="fYu-69-s8j"/>
                         <outlet property="mapView" destination="760-R6-JCS" id="dSW-Bj-eBP"/>
                         <outlet property="searchBar" destination="Lvt-bY-1DZ" id="REd-WI-Ku6"/>
                         <outlet property="searchView" destination="K9j-pg-A5m" id="E7b-xG-ZIK"/>

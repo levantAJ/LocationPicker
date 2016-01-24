@@ -17,7 +17,7 @@ DEPENDENCIES:
   - Polyline (~> 3.0)
   - Realm
   - RealmSwift
-  - Utils (from `../Utils`)
+  - Utils (from `../../../Me/Utils`)
 
 EXTERNAL SOURCES:
   ObjectMapper:
@@ -27,7 +27,7 @@ EXTERNAL SOURCES:
     :commit: 02b5b0f6cd52164e1f19709056d5d01f2ad7c5b9
     :git: https://github.com/levantAJ/Observable.git
   Utils:
-    :path: "../Utils"
+    :path: "../../../Me/Utils"
 
 CHECKOUT OPTIONS:
   ObjectMapper:

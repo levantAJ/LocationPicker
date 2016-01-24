@@ -17,6 +17,8 @@ public protocol LocationPickerViewControllerDelegate: class {
 public final class LocationPickerViewController: UIViewController {
     
     @IBOutlet weak var currentLocationButton: UIButton!
+    @IBOutlet weak var currentLocationButtonHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var currentLocationButtonWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var searchView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -57,7 +59,7 @@ public final class LocationPickerViewController: UIViewController {
         super.viewDidLoad()
         setupViewModel()
         cancelButton.title = NSLocalizedString("Cancel", comment: "")
-        currentLocationButton.addRadius()
+        setupCurrentLocationButton()
         setupMapView()
         setupPinView()
         setupCalloutView()
@@ -123,7 +125,18 @@ public final class LocationPickerViewController: UIViewController {
     private func setupSearchBar() {
         searchBar.delegate = self
         searchBar.enableSearchBar()
-        searchBar.setTextColor(UIColor.blackColor())
+        searchBar.setTextColor(UIColor.whiteColor())
+    }
+    
+    private func setupCurrentLocationButton() {
+        currentLocationButton.setImage(LocationPicker.sharedInstance.dataSource.currentLocationImage(), forState: .Normal)
+        currentLocationButtonWidthConstraint.constant = LocationPicker.sharedInstance.dataSource.currentLocationSize().width
+        currentLocationButtonHeightConstraint.constant = LocationPicker.sharedInstance.dataSource.currentLocationSize().height
+        if LocationPicker.sharedInstance.dataSource.currentLocationIsCircle() {
+            currentLocationButton.addCircle()
+        } else {
+            currentLocationButton.addRadius()
+        }
     }
 }
 

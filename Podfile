@@ -8,7 +8,7 @@ platform :ios, '8.0'
 target 'LocationPicker' do
     
 #    pod 'Utils', :git => 'https://github.com/levantAJ/Utils.git', :commit => 'de47a1dc0424e67a82d80724e24797c0347901ee'
-    pod 'Utils', :path => '../Utils'
+    pod 'Utils', :path => '../../../Me/Utils'
     pod 'Observable', :git => 'https://github.com/levantAJ/Observable.git', :commit => '02b5b0f6cd52164e1f19709056d5d01f2ad7c5b9'
     #Open source
     pod 'Polyline', '~> 3.0'

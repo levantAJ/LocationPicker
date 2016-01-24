@@ -11,16 +11,22 @@ import Utils
 
 public final class LocationPicker {
     
-    public var navigationControllrer: UINavigationController!
+    public static let sharedInstance = LocationPicker()
+    public var navigationController: UINavigationController!
     public var viewController: LocationPickerViewController!
+    public var dataSource: LocationPickerDataSource!
     
     class func frameworkBundle() -> NSBundle? {
         return NSBundle(forClass: LocationPicker.self)
     }
     
-    public init() {
-        navigationControllrer = Utils.viewController(Constants.LocationPicker.NavigationControllerIdentifier, storyboardName: "LocationPicker", bundle: LocationPicker.frameworkBundle()) as! UINavigationController
-        viewController = navigationControllrer.topViewController as! LocationPickerViewController
+    public class func standardLocationPicker(dataSource: LocationPickerDataSource) -> LocationPicker {
+        sharedInstance.dataSource = dataSource
+        sharedInstance.navigationController = Utils.viewController(Constants.LocationPicker.NavigationControllerIdentifier, storyboardName: "LocationPicker", bundle: LocationPicker.frameworkBundle()) as! UINavigationController
+        sharedInstance.navigationController.navigationBar.barTintColor = dataSource.primayColor()
+        sharedInstance.navigationController.navigationBar.tintColor = dataSource.navigationTextColor()
+        sharedInstance.viewController = sharedInstance.navigationController.topViewController as! LocationPickerViewController
+        return sharedInstance
     }
 }
 
