@@ -126,6 +126,7 @@ public final class LocationPickerViewController: UIViewController {
         searchBar.delegate = self
         searchBar.enableSearchBar()
         searchBar.setTextColor(UIColor.whiteColor())
+        searchBar.setPlaceholderTextColor(UIColor.whiteColor())
     }
     
     private func setupCurrentLocationButton() {
@@ -133,7 +134,7 @@ public final class LocationPickerViewController: UIViewController {
         currentLocationButtonWidthConstraint.constant = LocationPicker.sharedInstance.dataSource.currentLocationSize().width
         currentLocationButtonHeightConstraint.constant = LocationPicker.sharedInstance.dataSource.currentLocationSize().height
         if LocationPicker.sharedInstance.dataSource.currentLocationIsCircle() {
-            currentLocationButton.addCircle()
+            currentLocationButton.addRadius(currentLocationButtonWidthConstraint.constant/2)
         } else {
             currentLocationButton.addRadius()
         }
