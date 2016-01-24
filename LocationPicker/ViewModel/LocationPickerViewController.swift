@@ -235,7 +235,7 @@ extension LocationPickerViewController: UITableViewDelegate {
         default:
             mapView.gotoLocation(location.coordinate())
         }
-        
+        calloutView.show()
     }
     
     public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
