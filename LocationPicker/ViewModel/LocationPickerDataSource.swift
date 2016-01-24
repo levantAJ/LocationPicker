@@ -17,4 +17,19 @@ public protocol LocationPickerDataSource {
     func locationImage() -> UIImage
     func navigationTextColor() -> UIColor
     func primayColor() -> UIColor
+    func iconSize() -> CGSize
+}
+
+public extension LocationPickerDataSource {
+    func navigationTextColor() -> UIColor {
+        return UIColor.whiteColor()
+    }
+    
+    func primayColor() -> UIColor {
+        return UIColor.blackColor()
+    }
+    
+    func iconSize() -> CGSize {
+        return CGSize(width: 21, height: 21)
+    }
 }

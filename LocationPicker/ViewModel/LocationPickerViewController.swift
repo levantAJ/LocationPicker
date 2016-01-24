@@ -202,14 +202,14 @@ extension LocationPickerViewController: UITableViewDataSource {
         switch location.locationType() {
         case .CurrentLocation:
             cell.textLabel?.text = NSLocalizedString("Your current location", comment: "")
-            cell.imageView?.image = UIImage(named: "ic_current_location_non_bg")
         case .Drop:
             cell.textLabel?.text = NSLocalizedString("Choose on map", comment: "")
-            cell.imageView?.image = UIImage(named: "ic_location_square")
         default:
             cell.textLabel?.text = location.name
             cell.detailTextLabel?.text = location.address
-            cell.imageView?.image = UIImage(named: "ic_pin_start_square")
+        }
+        if let type = SearchResultType(rawValue: indexPath.section) {
+            cell.imageView?.image = type.locationImage(indexPath.row)
         }
         return cell
     }

@@ -9,6 +9,8 @@
 import UIKit
 import Utils
 
+public let SharedDataSource: LocationPickerDataSource = LocationPicker.sharedInstance.dataSource
+
 public final class LocationPicker {
     
     public static let sharedInstance = LocationPicker()

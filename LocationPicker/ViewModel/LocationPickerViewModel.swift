@@ -25,6 +25,21 @@ public enum SearchResultType: Int {
             return NSLocalizedString("Remote", comment: "")
         }
     }
+    
+    func locationImage(row: Int) -> UIImage {
+        switch self {
+        case .Instance:
+            if row == 0 {
+                return SharedDataSource.currentLocationImage().imageToSize(SharedDataSource.iconSize())
+            } else {
+                return SharedDataSource.locationImage().imageToSize(SharedDataSource.iconSize())
+            }
+        case .Recently:
+            return SharedDataSource.recentlyImage().imageToSize(SharedDataSource.iconSize())
+        case .Remote:
+            return SharedDataSource.locationImage().imageToSize(SharedDataSource.iconSize())
+        }
+    }
 }
 
 final class LocationPickerViewModel: BaseViewModel {
