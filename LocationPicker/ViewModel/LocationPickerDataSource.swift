@@ -19,7 +19,6 @@ public protocol LocationPickerDataSource {
     func primayColor() -> UIColor
     func iconSize() -> CGSize
     func vietbandoKey() -> String?
-    func vietbandoAPI() -> NSURL?
     func numberOfLocationsPerAPI() -> Int
 }
 
@@ -37,10 +36,6 @@ public extension LocationPickerDataSource {
     }
     
     func vietbandoKey() -> String? {
-        return nil
-    }
-    
-    func vietbandoAPI() -> NSURL? {
         return nil
     }
     

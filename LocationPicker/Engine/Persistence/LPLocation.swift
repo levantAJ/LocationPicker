@@ -110,20 +110,22 @@ public final class LPLocation: Object {
 //MARK: Foursquare
 
 public extension LPLocation {
-    public class func fromFoursquareJsonObject(jsonObject: [String: AnyObject]) -> LPLocation {
+    public class func fromFoursquareJsonObject(jsonObject: [String: AnyObject]) -> LPLocation? {
         let loc = LPLocation()
-        if let name = jsonObject["name"] as? String {
+        if let name = jsonObject["name"] as? String where !name.isEmpty {
             loc.name = name
         }
         let location = jsonObject["location"] as! [String: AnyObject]
-        loc.latitude = location["lat"] as! Double
-        loc.longitude = location["lng"] as! Double
-        if let address = location["address"] as? String {
+        if let address = location["address"] as? String where address.isEmpty {
             loc.address = address
-        }
-        if loc.address.isEmpty {
+        } else {
             loc.address = loc.name
         }
+        if loc.address.isEmpty && loc.name.isEmpty {
+            return nil
+        }
+        loc.latitude = location["lat"] as! Double
+        loc.longitude = location["lng"] as! Double
         return loc
     }
     
@@ -134,7 +136,9 @@ public extension LPLocation {
         }
         var locations = [LPLocation]()
         venues.forEach {
-            locations.append(LPLocation.fromFoursquareJsonObject($0))
+            if let location = LPLocation.fromFoursquareJsonObject($0) {
+                locations.append(location)
+            }
         }
         return locations
     }
@@ -149,7 +153,7 @@ public extension LPLocation {
         case ZERO = "ZERO_RESULTS"
     }
     
-    public class func fromGoogleJsonObject(jsonObject: [String: AnyObject]) -> LPLocation {
+    public class func fromGoogleJsonObject(jsonObject: [String: AnyObject]) -> LPLocation? {
         let loc = LPLocation()
         if let address = jsonObject["formatted_address"] as? String {
             loc.address = address
@@ -159,6 +163,9 @@ public extension LPLocation {
         let location = geometry["location"] as! [String: Double]
         loc.latitude = location["lat"]!
         loc.longitude = location["lng"]!
+        if loc.name.isEmpty && loc.address.isEmpty {
+            return nil
+        }
         return loc
     }
     
@@ -166,7 +173,9 @@ public extension LPLocation {
         guard let status = jsonArray["status"] as? String where status == GoogleStatus.OK.rawValue, let results = jsonArray["results"] as? [[String: AnyObject]] else { return [LPLocation]() }
         var locations = [LPLocation]()
         results.forEach {
-            locations.append(LPLocation.fromGoogleJsonObject($0))
+            if let location = LPLocation.fromGoogleJsonObject($0) {
+                locations.append(location)
+            }
         }
         return locations
     }
@@ -175,34 +184,25 @@ public extension LPLocation {
 //MARK: Vietbando
 
 public extension LPLocation {
-    public class func fromVietBanDoJsonArray(jsonArray: [String: AnyObject]) -> [LPLocation] {
-        guard let list = jsonArray["List"] as? [[String: AnyObject]] else { return [LPLocation]() }
-        var locations = [LPLocation]()
-        list.forEach {
-            locations.append(LPLocation.fromVietBanDoJsonObject($0))
-        }
-        return locations
-    }
-    
-    public class func fromVietBanDoJsonObject(jsonObject: [String: AnyObject]) -> LPLocation {
+    public class func fromVietBanDoJsonObject(jsonObject: [String: AnyObject]) -> LPLocation? {
         let loc = LPLocation()
-        var address = ""
-        if let number = jsonObject["Number"] as? String {
-            address = "\(address)\(number)"
+        var address = [String]()
+        if let number = jsonObject["Number"] as? String where !number.isEmpty {
+            address.append(number)
         }
-        if let street = jsonObject["Street"] as? String {
-            address = "\(address), \(street)"
+        if let street = jsonObject["Street"] as? String where !street.isEmpty {
+            address.append(street)
         }
-        if let ward = jsonObject["Ward"] as? String {
-            address = "\(address), \(ward)"
+        if let ward = jsonObject["Ward"] as? String where !ward.isEmpty {
+            address.append(ward)
         }
-        if let district = jsonObject["District"] as? String {
-            address = "\(address), \(district)"
+        if let district = jsonObject["District"] as? String where !district.isEmpty {
+            address.append(district)
         }
-        if let province = jsonObject["Province"] as? String {
-            address = "\(address), \(province)"
+        if let province = jsonObject["Province"] as? String where !province.isEmpty {
+            address.append(province)
         }
-        loc.address = address
+        loc.address = address.joinWithSeparator(", ")
         if let latitude = jsonObject["Latitude"] as? Double {
             loc.latitude = latitude
         }
@@ -211,7 +211,23 @@ public extension LPLocation {
         }
         if let name = jsonObject["Name"] as? String {
             loc.name = name
+        } else {
+            loc.name = loc.address
+        }
+        if loc.name.isEmpty && loc.address.isEmpty {
+            return nil
         }
         return loc
+    }
+    
+    public class func fromVietBanDoJsonArray(jsonArray: [String: AnyObject]) -> [LPLocation] {
+        guard let list = jsonArray["List"] as? [[String: AnyObject]] else { return [LPLocation]() }
+        var locations = [LPLocation]()
+        list.forEach {
+            if let location = LPLocation.fromVietBanDoJsonObject($0) {
+                locations.append(location)
+            }
+        }
+        return locations
     }
 }

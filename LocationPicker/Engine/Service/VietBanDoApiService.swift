@@ -12,10 +12,11 @@ import CoreLocation
 import Utils
 
 public final class VietBanDoApiService {
+    public static let sharedInstance = VietBanDoApiService()
+    
     public func searchAddress(address: String, topLeftCoordinate: CLLocationCoordinate2D, bottomRightCoordinate: CLLocationCoordinate2D, success: ([LPLocation]) -> Void, failure: (NSError) -> Void) {
-        guard let url = SharedDataSource.vietbandoAPI()?.absoluteString, key = SharedDataSource.vietbandoKey() else { return }
-        Alamofire.request(.GET,
-            url,
+        guard let key = SharedDataSource.vietbandoKey() else { return }
+        Alamofire.request(.POST, Constants.VietBanDoApiService.API,
             parameters: [
                 "IsOrder": true,
                 "Keyword": address,
@@ -23,13 +24,12 @@ public final class VietBanDoApiService {
                 "Ly": topLeftCoordinate.longitude,
                 "Rx": bottomRightCoordinate.latitude,
                 "Ry": bottomRightCoordinate.longitude,
-                "Page":1,
-                "PageSize":20
+                "Page": 1,
+                "PageSize": SharedDataSource.numberOfLocationsPerAPI()
             ],
             encoding: .JSON,
             headers: [
-                "RegisterKey": key,
-                "Content-Type": "application/json"
+                "RegisterKey": key
             ])
             .responseJSON { (response) -> Void in
                 switch response.result {
@@ -37,9 +37,15 @@ public final class VietBanDoApiService {
                     failure(error)
                 case .Success(let json):
                     if let json = json as? [String: AnyObject] {
-                        success(LPLocation.fromGoogleJsonArray(json))
+                        success(LPLocation.fromVietBanDoJsonArray(json))
                     }
                 }
         }
+    }
+}
+
+extension Constants {
+    struct VietBanDoApiService {
+        static let API = "http://developers.vietbando.com/V2/service/PartnerPortalService.svc/rest/SearchAll"
     }
 }

@@ -89,6 +89,9 @@ public final class LocationPickerViewController: UIViewController {
         tableView.hidden = true
         tableView.delegate = self
         tableView.dataSource = self
+        let tap = UITapGestureRecognizer(target: self, action: "tableViewTapped")
+        tap.cancelsTouchesInView = false
+        tableView.addGestureRecognizer(tap)
         view.bringSubviewToFront(tableView)
     }
     
@@ -173,6 +176,10 @@ extension LocationPickerViewController: MKMapViewDelegate {
 // MARK: - User interactions
 
 extension LocationPickerViewController {
+    func tableViewTapped() {
+        searchBar.resignFirstResponder()
+    }
+    
     @IBAction func cancelButtonTapped(sender: AnyObject) {
         navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -198,6 +205,7 @@ extension LocationPickerViewController: UITableViewDataSource {
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(Constants.LocationPickerViewController.DropMapSeachCell, forIndexPath: indexPath)
+        cell.textLabel?.font = UIFont.systemFontOfSize(15)
         guard let location = locationPickerViewModel.locationAtIndexPath(indexPath) else { return cell }
         switch location.locationType() {
         case .CurrentLocation:
@@ -205,8 +213,8 @@ extension LocationPickerViewController: UITableViewDataSource {
         case .Drop:
             cell.textLabel?.text = NSLocalizedString("Choose on map", comment: "")
         default:
-            cell.textLabel?.text = location.name
-            cell.detailTextLabel?.text = location.address
+            cell.textLabel?.text = location.address
+            cell.detailTextLabel?.text = location.name
         }
         if let type = SearchResultType(rawValue: indexPath.section) {
             cell.imageView?.image = type.locationImage(indexPath.row)

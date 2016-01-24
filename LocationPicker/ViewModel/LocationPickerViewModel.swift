@@ -65,19 +65,19 @@ final class LocationPickerViewModel: BaseViewModel {
         debouncer.dispatch {
             self.locations.value?[SearchResultType.Remote] = [LPLocation]()
             if !address.isEmpty {
-                GoogleApiService().searchAddress(address, success: { [weak self] (locations) -> Void in
+                GoogleApiService.sharedInstance.searchAddress(address, success: { [weak self] (locations) -> Void in
                     self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
                     self?.handleError(nil)
                     }, failure: { [weak self] (error) -> Void in
                         self?.handleError(error)
                     })
-                FoursquareApiService().searchAddress(address, centerCoor: centerCoor, success: { [weak self] (locations) -> Void in
+                FoursquareApiService.sharedInstance.searchAddress(address, centerCoor: centerCoor, success: { [weak self] (locations) -> Void in
                     self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
                     self?.handleError(nil)
                     }, failure: { [weak self] (error) -> Void in
                         self?.handleError(error)
                     })
-                VietBanDoApiService().searchAddress(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate, success: { [weak self] (locations) -> Void in
+                VietBanDoApiService.sharedInstance.searchAddress(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate, success: { [weak self] (locations) -> Void in
                     self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
                     self?.handleError(nil)
                     }, failure: { [weak self] (error) -> Void in
