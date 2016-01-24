@@ -11,8 +11,6 @@ import Alamofire
 import Utils
 
 public final class FoursquareApiService {
-    static let sharedInstance = FoursquareApiService()
-    
     public func searchAddress(address: String, centerCoor: CLLocationCoordinate2D, success: ([LPLocation]) -> Void, failure: (NSError) -> Void) {
         let url = urlFromCoordinate(centerCoor, address: address)
         Alamofire.request(.GET,

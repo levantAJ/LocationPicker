@@ -10,7 +10,7 @@ import CoreLocation
 import RealmSwift
 import Utils
 
-enum LocationType: Int {
+public enum LPLocationType: Int {
     case Unknown
     case CurrentLocation
     case Google
@@ -33,9 +33,9 @@ public final class LPLocation: Object {
     dynamic var time = Double(0)
     dynamic var address = ""
     dynamic var name = ""
-    dynamic var locationTypeRaw = LocationType.Unknown.rawValue
+    dynamic var locationTypeRaw = LPLocationType.Unknown.rawValue
     
-    convenience init(coordinate: CLLocationCoordinate2D, address: String) {
+    public convenience init(coordinate: CLLocationCoordinate2D, address: String) {
         self.init()
         self.latitude = coordinate.latitude
         self.longitude = coordinate.longitude
@@ -48,28 +48,28 @@ public final class LPLocation: Object {
         return "\(latitude)\(longitude)"
     }
     
-    class func instanceLocations() -> [LPLocation] {
+    public class func instanceLocations() -> [LPLocation] {
         return [currentLocation(), dropLocation()]
     }
     
-    class func currentLocation() -> LPLocation {
+    public class func currentLocation() -> LPLocation {
         let location = LPLocation()
-        location.locationTypeRaw = LocationType.CurrentLocation.rawValue
+        location.locationTypeRaw = LPLocationType.CurrentLocation.rawValue
         return location
     }
     
-    class func dropLocation() -> LPLocation {
+    public class func dropLocation() -> LPLocation {
         let location = LPLocation()
-        location.locationTypeRaw = LocationType.Drop.rawValue
+        location.locationTypeRaw = LPLocationType.Drop.rawValue
         return location
     }
     
-    func locationType() -> LocationType {
-        guard let type = LocationType(rawValue: locationTypeRaw) else { return .Unknown }
+    public func locationType() -> LPLocationType {
+        guard let type = LPLocationType(rawValue: locationTypeRaw) else { return .Unknown }
         return type
     }
     
-    func coordinate() -> CLLocationCoordinate2D {
+    public func coordinate() -> CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
     
@@ -81,7 +81,7 @@ public final class LPLocation: Object {
         return ["coordinate"]
     }
     
-    func update() {
+    public func update() {
         do {
             let realm = try Realm()
             try realm.write({
@@ -93,12 +93,12 @@ public final class LPLocation: Object {
         }
     }
     
-    class func recentlyLocations() -> [LPLocation]? {
+    public class func recentlyLocations() -> [LPLocation]? {
         do {
             let realm = try Realm()
             let results = realm.objects(LPLocation).sorted("time", ascending: false)
             let locations = results.flatMap({ $0 })
-            return locations.takeElements(5)
+            return locations.takeElements(SharedDataSource.numberOfLocationsPerAPI())
         } catch let error as NSError {
             print(error)
             return nil
@@ -110,7 +110,7 @@ public final class LPLocation: Object {
 //MARK: Foursquare
 
 public extension LPLocation {
-    class func fromFoursquareJsonObject(jsonObject: [String: AnyObject]) -> LPLocation {
+    public class func fromFoursquareJsonObject(jsonObject: [String: AnyObject]) -> LPLocation {
         let loc = LPLocation()
         if let name = jsonObject["name"] as? String {
             loc.name = name
@@ -127,14 +127,14 @@ public extension LPLocation {
         return loc
     }
     
-    class func fromFoursquareJsonArray(jsonArray: [String: AnyObject]) -> [LPLocation] {
+    public class func fromFoursquareJsonArray(jsonArray: [String: AnyObject]) -> [LPLocation] {
         guard let response = jsonArray["response"] as? [String: AnyObject],
             venues = response["venues"] as? [[String: AnyObject]] else {
                 return [LPLocation]()
         }
         var locations = [LPLocation]()
-        for item in venues {
-            locations.append(LPLocation.fromFoursquareJsonObject(item))
+        venues.forEach {
+            locations.append(LPLocation.fromFoursquareJsonObject($0))
         }
         return locations
     }
@@ -149,7 +149,7 @@ public extension LPLocation {
         case ZERO = "ZERO_RESULTS"
     }
     
-    class func fromGoogleJsonObject(jsonObject: [String: AnyObject]) -> LPLocation {
+    public class func fromGoogleJsonObject(jsonObject: [String: AnyObject]) -> LPLocation {
         let loc = LPLocation()
         if let address = jsonObject["formatted_address"] as? String {
             loc.address = address
@@ -162,14 +162,56 @@ public extension LPLocation {
         return loc
     }
     
-    class func fromGoogleJsonArray(jsonArray: [String: AnyObject]) -> [LPLocation] {
-        guard let status = jsonArray["status"] as? String where status == GoogleStatus.OK.rawValue, let results = jsonArray["results"] as? [[String: AnyObject]] else {
-            return [LPLocation]()
-        }
+    public class func fromGoogleJsonArray(jsonArray: [String: AnyObject]) -> [LPLocation] {
+        guard let status = jsonArray["status"] as? String where status == GoogleStatus.OK.rawValue, let results = jsonArray["results"] as? [[String: AnyObject]] else { return [LPLocation]() }
         var locations = [LPLocation]()
-        for item in results {
-            locations.append(LPLocation.fromGoogleJsonObject(item))
+        results.forEach {
+            locations.append(LPLocation.fromGoogleJsonObject($0))
         }
         return locations
+    }
+}
+
+//MARK: Vietbando
+
+public extension LPLocation {
+    public class func fromVietBanDoJsonArray(jsonArray: [String: AnyObject]) -> [LPLocation] {
+        guard let list = jsonArray["List"] as? [[String: AnyObject]] else { return [LPLocation]() }
+        var locations = [LPLocation]()
+        list.forEach {
+            locations.append(LPLocation.fromVietBanDoJsonObject($0))
+        }
+        return locations
+    }
+    
+    public class func fromVietBanDoJsonObject(jsonObject: [String: AnyObject]) -> LPLocation {
+        let loc = LPLocation()
+        var address = ""
+        if let number = jsonObject["Number"] as? String {
+            address = "\(address)\(number)"
+        }
+        if let street = jsonObject["Street"] as? String {
+            address = "\(address), \(street)"
+        }
+        if let ward = jsonObject["Ward"] as? String {
+            address = "\(address), \(ward)"
+        }
+        if let district = jsonObject["District"] as? String {
+            address = "\(address), \(district)"
+        }
+        if let province = jsonObject["Province"] as? String {
+            address = "\(address), \(province)"
+        }
+        loc.address = address
+        if let latitude = jsonObject["Latitude"] as? Double {
+            loc.latitude = latitude
+        }
+        if let longitude = jsonObject["Longitude"] as? Double {
+            loc.longitude = longitude
+        }
+        if let name = jsonObject["Name"] as? String {
+            loc.name = name
+        }
+        return loc
     }
 }

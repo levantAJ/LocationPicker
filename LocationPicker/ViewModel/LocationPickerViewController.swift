@@ -249,12 +249,12 @@ extension LocationPickerViewController: UISearchBarDelegate {
     public func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         tableView.hidden = false
         guard !searchText.isEmpty else { return }
-        locationPickerViewModel.searchAddress(searchText, coordinate: mapView.centerCoordinate)
+        locationPickerViewModel.searchAddress(searchText, centerCoor: mapView.centerCoordinate, topLeftCoordinate: mapView.topLeftCoordinate(), bottomRightCoordinate: mapView.bottomRightCoordinate())
     }
     
     public func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
         tableView.hidden = false
-        locationPickerViewModel.searchAddress("", coordinate: mapView.centerCoordinate)
+        locationPickerViewModel.searchAddress("", centerCoor: mapView.centerCoordinate, topLeftCoordinate: mapView.topLeftCoordinate(), bottomRightCoordinate: mapView.bottomRightCoordinate())
         calloutView.hide()
         return true
     }

@@ -12,8 +12,6 @@ import CoreLocation
 import Utils
 
 public final class GoogleApiService {
-    public static let sharedInstance = GoogleApiService()
-    
     public func searchAddress(address: String,
         success: ([LPLocation]) -> Void,
         failure: ((NSError?) -> Void)?) {

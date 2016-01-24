@@ -18,6 +18,9 @@ public protocol LocationPickerDataSource {
     func navigationTextColor() -> UIColor
     func primayColor() -> UIColor
     func iconSize() -> CGSize
+    func vietbandoKey() -> String?
+    func vietbandoAPI() -> NSURL?
+    func numberOfLocationsPerAPI() -> Int
 }
 
 public extension LocationPickerDataSource {
@@ -32,4 +35,17 @@ public extension LocationPickerDataSource {
     func iconSize() -> CGSize {
         return CGSize(width: 21, height: 21)
     }
+    
+    func vietbandoKey() -> String? {
+        return nil
+    }
+    
+    func vietbandoAPI() -> NSURL? {
+        return nil
+    }
+    
+    func numberOfLocationsPerAPI() -> Int {
+        return 5
+    }
 }
+

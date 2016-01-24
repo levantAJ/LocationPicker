@@ -9,6 +9,7 @@
 import CoreLocation
 import Observable
 import Utils
+import Debouncer
 
 public enum SearchResultType: Int {
     case Instance
@@ -45,11 +46,13 @@ public enum SearchResultType: Int {
 final class LocationPickerViewModel: BaseViewModel {
     var locations = Observable(value: OrderedDictionary<SearchResultType, [LPLocation]>())
     var address = Observable(value: "")
+    private let debouncer = Debouncer(delay: 0.2)
     
     override init() {
         locations.value?[SearchResultType.Instance] = [LPLocation]()
         locations.value?[SearchResultType.Recently] = [LPLocation]()
         locations.value?[SearchResultType.Remote] = [LPLocation]()
+        debouncer.invalidate()
     }
     
     override func removeListeners() {
@@ -58,30 +61,36 @@ final class LocationPickerViewModel: BaseViewModel {
         address.removeListener()
     }
     
-    func searchAddress(address: String, coordinate: CLLocationCoordinate2D) {
-        if !address.isEmpty {
-            if Array(arrayLiteral: address)[0].tryParseInt() {
-                FoursquareApiService.sharedInstance.searchAddress(address, centerCoor: coordinate, success: { [weak self] (locations) -> Void in
-                    self?.locations.value = self?.instancelocationsFromSemaphore(locations)
+    func searchAddress(address: String, centerCoor: CLLocationCoordinate2D, topLeftCoordinate: CLLocationCoordinate2D, bottomRightCoordinate: CLLocationCoordinate2D) {
+        debouncer.dispatch {
+            self.locations.value?[SearchResultType.Remote] = [LPLocation]()
+            if !address.isEmpty {
+                GoogleApiService().searchAddress(address, success: { [weak self] (locations) -> Void in
+                    self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
+                    self?.handleError(nil)
+                    }, failure: { [weak self] (error) -> Void in
+                        self?.handleError(error)
+                    })
+                FoursquareApiService().searchAddress(address, centerCoor: centerCoor, success: { [weak self] (locations) -> Void in
+                    self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
+                    self?.handleError(nil)
+                    }, failure: { [weak self] (error) -> Void in
+                        self?.handleError(error)
+                    })
+                VietBanDoApiService().searchAddress(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate, success: { [weak self] (locations) -> Void in
+                    self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
                     self?.handleError(nil)
                     }, failure: { [weak self] (error) -> Void in
                         self?.handleError(error)
                 })
             } else {
-                GoogleApiService.sharedInstance.searchAddress(address, success: { [weak self] (locations) -> Void in
-                    self?.locations.value = self?.instancelocationsFromSemaphore(locations)
-                    self?.handleError(nil)
-                    }, failure: { [weak self] (error) -> Void in
-                        self?.handleError(error)
-                })
+                self.locations.value = self.instancelocationsFromRemoteLocations([LPLocation]())
             }
-        } else {
-            locations.value = instancelocationsFromSemaphore([LPLocation]())
         }
     }
     
     func addressFromCoordinate(coordinate: CLLocationCoordinate2D) {
-        GoogleApiService.sharedInstance.addressByCoordinate(coordinate, success: { [weak self] (address) -> Void in
+        GoogleApiService().addressByCoordinate(coordinate, success: { [weak self] (address) -> Void in
             self?.address.value = address
             self?.handleError(nil)
             }) { [weak self] (error) -> Void in
@@ -90,11 +99,15 @@ final class LocationPickerViewModel: BaseViewModel {
         }
     }
     
-    private func instancelocationsFromSemaphore(locations: [LPLocation]) -> OrderedDictionary<SearchResultType, [LPLocation]> {
+    private func instancelocationsFromRemoteLocations(remoteLocations: [LPLocation]) -> OrderedDictionary<SearchResultType, [LPLocation]> {
+        var currentRemoteLocations = [LPLocation]()
+        if let locations = locations.value?[SearchResultType.Remote] {
+            currentRemoteLocations = locations
+        }
         var results = OrderedDictionary<SearchResultType, [LPLocation]>()
         results[SearchResultType.Instance] = LPLocation.instanceLocations()
         results[SearchResultType.Recently] = LPLocation.recentlyLocations() ?? []
-        results[SearchResultType.Remote] = locations
+        results[SearchResultType.Remote] = currentRemoteLocations + remoteLocations
         return results
     }
     

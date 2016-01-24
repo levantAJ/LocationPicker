@@ -22,6 +22,7 @@
 		3D2F1B391C21A14200811B1A /* GooglePolylineUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F1B381C21A14200811B1A /* GooglePolylineUtils.swift */; };
 		3D2F1B401C21A7A200811B1A /* MKPolyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F1B3F1C21A7A200811B1A /* MKPolyline.swift */; };
 		3D561AA61C548796001A97D5 /* LocationPickerDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D561AA51C548796001A97D5 /* LocationPickerDataSource.swift */; };
+		3D561AAD1C551A02001A97D5 /* VietBanDoApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D561AAC1C551A02001A97D5 /* VietBanDoApiService.swift */; };
 		3DAEBDBA1C19C7EF00EF73D3 /* LocationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DAEBDB91C19C7EF00EF73D3 /* LocationPicker.swift */; };
 		802F2F45A559AF62F0448226 /* Pods_LocationPicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FAB8E429947B7BBE6E846EC /* Pods_LocationPicker.framework */; };
 /* End PBXBuildFile section */
@@ -55,6 +56,7 @@
 		3D2F1B381C21A14200811B1A /* GooglePolylineUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GooglePolylineUtils.swift; sourceTree = "<group>"; };
 		3D2F1B3F1C21A7A200811B1A /* MKPolyline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MKPolyline.swift; sourceTree = "<group>"; };
 		3D561AA51C548796001A97D5 /* LocationPickerDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationPickerDataSource.swift; sourceTree = "<group>"; };
+		3D561AAC1C551A02001A97D5 /* VietBanDoApiService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VietBanDoApiService.swift; sourceTree = "<group>"; };
 		3DAEBDB91C19C7EF00EF73D3 /* LocationPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationPicker.swift; sourceTree = "<group>"; };
 		606751588849B4926208EA61 /* Pods-LocationPicker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LocationPicker.release.xcconfig"; path = "Pods/Target Support Files/Pods-LocationPicker/Pods-LocationPicker.release.xcconfig"; sourceTree = "<group>"; };
 		6FAB8E429947B7BBE6E846EC /* Pods_LocationPicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LocationPicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -148,6 +150,7 @@
 			children = (
 				3D072F521C188E0700B47749 /* FoursquareApiService.swift */,
 				3D072F531C188E0700B47749 /* GoogleApiService.swift */,
+				3D561AAC1C551A02001A97D5 /* VietBanDoApiService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -369,6 +372,7 @@
 				3DAEBDBA1C19C7EF00EF73D3 /* LocationPicker.swift in Sources */,
 				3D072F591C18900400B47749 /* Errors.swift in Sources */,
 				3D2F1B391C21A14200811B1A /* GooglePolylineUtils.swift in Sources */,
+				3D561AAD1C551A02001A97D5 /* VietBanDoApiService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

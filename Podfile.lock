@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (3.1.4)
+  - Debouncer (0.0.1)
   - ObjectMapper (0.18)
   - Observable (0.0.1)
   - Polyline (3.0.0)
@@ -12,21 +13,24 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 3.0)
+  - Debouncer (from `../Debouncer`)
   - ObjectMapper (from `https://github.com/Hearst-DD/ObjectMapper.git`, commit `c9b53ad38a17847d2f68baf4e0ef76a0bfea476d`)
-  - Observable (from `../../../Me/Observable`)
+  - Observable (from `../Observable`)
   - Polyline (~> 3.0)
   - Realm
   - RealmSwift
-  - Utils (from `../../../Me/Utils`)
+  - Utils (from `../Utils`)
 
 EXTERNAL SOURCES:
+  Debouncer:
+    :path: "../Debouncer"
   ObjectMapper:
     :commit: c9b53ad38a17847d2f68baf4e0ef76a0bfea476d
     :git: https://github.com/Hearst-DD/ObjectMapper.git
   Observable:
-    :path: "../../../Me/Observable"
+    :path: "../Observable"
   Utils:
-    :path: "../../../Me/Utils"
+    :path: "../Utils"
 
 CHECKOUT OPTIONS:
   ObjectMapper:
@@ -35,6 +39,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: fbc829692f351fa1d8a31dd75fd7f7f56fea31fb
+  Debouncer: a5b10acec541b2b16b707a4ef661269ea5f75d51
   ObjectMapper: 0dec0fec1e10b707ba94dd0891580a582ab84cf0
   Observable: 8d559431b212bae6b99bbba766f0af28d073170e
   Polyline: 18026fd6675f754a15e70b4fd7ca01d0d156b6d7
