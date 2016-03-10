@@ -231,19 +231,9 @@ extension LocationPickerViewController: UITableViewDelegate {
         searchBar.resignFirstResponder()
         tableView.hidden = true
         guard let location = locationPickerViewModel.locationAtIndexPath(indexPath) else { return }
-        switch location.locationType() {
-        case .CurrentLocation:
-            location.latitude = mapView.userLocation.coordinate.latitude
-            location.longitude = mapView.userLocation.coordinate.longitude
-            mapView.setUserTrackingMode(.Follow, animated: true)
-        case .Drop:
-            location.latitude = mapView.centerCoordinate.latitude
-            location.longitude = mapView.centerCoordinate.longitude
-            mapView.gotoLocation(mapView.centerCoordinate)
-        default:
-            mapView.gotoLocation(location.coordinate())
-        }
-        calloutView.show()
+        delegate?.locationPickerViewController(self, seletedCoordinate: location.coordinate(), selectedAddress: location.address)
+        location.update()
+        navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
     
     public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

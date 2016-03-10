@@ -65,28 +65,48 @@ final class LocationPickerViewModel: BaseViewModel {
         debouncer.dispatch {
             self.locations.value?[SearchResultType.Remote] = [LPLocation]()
             if !address.isEmpty {
-                GoogleApiService.sharedInstance.searchAddress(address, success: { [weak self] (locations) -> Void in
-                    self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
-                    self?.handleError(nil)
-                    }, failure: { [weak self] (error) -> Void in
-                        self?.handleError(error)
-                    })
-                FoursquareApiService.sharedInstance.searchAddress(address, centerCoor: centerCoor, success: { [weak self] (locations) -> Void in
-                    self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
-                    self?.handleError(nil)
-                    }, failure: { [weak self] (error) -> Void in
-                        self?.handleError(error)
-                    })
-                VietBanDoApiService.sharedInstance.searchAddress(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate, success: { [weak self] (locations) -> Void in
-                    self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
-                    self?.handleError(nil)
-                    }, failure: { [weak self] (error) -> Void in
-                        self?.handleError(error)
-                })
+                let digits = NSCharacterSet.decimalDigitCharacterSet()
+                if let firstCharacter = address.unicodeScalars.first where                     digits.longCharacterIsMember(firstCharacter.value)  {
+                    self.searchByVietBanDo(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
+                    self.searchByGoogle(address)
+                    self.searchByFoursquare(address, centerCoor: centerCoor)
+                } else {
+                    self.searchByFoursquare(address, centerCoor: centerCoor)
+                    self.searchByGoogle(address)
+                    self.searchByVietBanDo(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
+                    
+                }
             } else {
                 self.locations.value = self.instancelocationsFromRemoteLocations([LPLocation]())
             }
         }
+    }
+    
+    func searchByGoogle(address: String) {
+        GoogleApiService.sharedInstance.searchAddress(address, success: { [weak self] (locations) -> Void in
+            self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
+            self?.handleError(nil)
+            }, failure: { [weak self] (error) -> Void in
+                self?.handleError(error)
+            })
+    }
+    
+    func searchByFoursquare(address: String, centerCoor: CLLocationCoordinate2D) {
+        FoursquareApiService.sharedInstance.searchAddress(address, centerCoor: centerCoor, success: { [weak self] (locations) -> Void in
+            self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
+            self?.handleError(nil)
+            }, failure: { [weak self] (error) -> Void in
+                self?.handleError(error)
+            })
+    }
+    
+    func searchByVietBanDo(address: String, topLeftCoordinate: CLLocationCoordinate2D, bottomRightCoordinate: CLLocationCoordinate2D ) {
+        VietBanDoApiService.sharedInstance.searchAddress(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate, success: { [weak self] (locations) -> Void in
+            self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
+            self?.handleError(nil)
+            }, failure: { [weak self] (error) -> Void in
+                self?.handleError(error)
+            })
     }
     
     func addressFromCoordinate(coordinate: CLLocationCoordinate2D) {
