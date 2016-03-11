@@ -49,9 +49,9 @@ final class LocationPickerViewModel: BaseViewModel {
     private let debouncer = Debouncer(delay: 0.2)
     
     override init() {
+        locations.value?[SearchResultType.Remote] = [LPLocation]()
         locations.value?[SearchResultType.Instance] = [LPLocation]()
         locations.value?[SearchResultType.Recently] = [LPLocation]()
-        locations.value?[SearchResultType.Remote] = [LPLocation]()
         debouncer.invalidate()
     }
     
@@ -125,9 +125,9 @@ final class LocationPickerViewModel: BaseViewModel {
             currentRemoteLocations = locations
         }
         var results = OrderedDictionary<SearchResultType, [LPLocation]>()
+        results[SearchResultType.Remote] = currentRemoteLocations + remoteLocations
         results[SearchResultType.Instance] = LPLocation.instanceLocations()
         results[SearchResultType.Recently] = LPLocation.recentlyLocations() ?? []
-        results[SearchResultType.Remote] = currentRemoteLocations + remoteLocations
         return results
     }
     

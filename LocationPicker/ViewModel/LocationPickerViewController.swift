@@ -142,6 +142,12 @@ public final class LocationPickerViewController: UIViewController {
             currentLocationButton.addRadius()
         }
     }
+    
+    private func selectLocation(location: LPLocation) {
+        delegate?.locationPickerViewController(self, seletedCoordinate: location.coordinate(), selectedAddress: location.address)
+        location.update()
+        navigationController?.dismissViewControllerAnimated(true, completion: nil)
+    }
 }
 
 //MARK: Map delegate
@@ -187,6 +193,10 @@ extension LocationPickerViewController {
     @IBAction func currentLocationButtonTapped(button: UIButton) {
         mapView.setUserTrackingMode(.Follow, animated: true)
     }
+    
+    public func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        searchBar.resignFirstResponder()
+    }
 }
 
 //MARK: table view data source
@@ -213,7 +223,11 @@ extension LocationPickerViewController: UITableViewDataSource {
         case .Drop:
             cell.textLabel?.text = NSLocalizedString("Choose on map", comment: "")
         default:
-            cell.textLabel?.text = location.address
+            var address = location.address
+            if address == "" {
+                address = location.name
+            }
+            cell.textLabel?.text = address
             cell.detailTextLabel?.text = location.name
         }
         if let type = SearchResultType(rawValue: indexPath.section) {
@@ -230,10 +244,22 @@ extension LocationPickerViewController: UITableViewDelegate {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         searchBar.resignFirstResponder()
         tableView.hidden = true
-        guard let location = locationPickerViewModel.locationAtIndexPath(indexPath) else { return }
-        delegate?.locationPickerViewController(self, seletedCoordinate: location.coordinate(), selectedAddress: location.address)
-        location.update()
-        navigationController?.dismissViewControllerAnimated(true, completion: nil)
+        guard let location = locationPickerViewModel.locationAtIndexPath(indexPath) else {
+            return
+        }
+        switch location.locationType() {
+        case .CurrentLocation:
+            location.latitude = mapView.userLocation.coordinate.latitude
+            location.longitude = mapView.userLocation.coordinate.longitude
+            selectLocation(location)
+        case .Drop:
+            location.latitude = mapView.centerCoordinate.latitude
+            location.longitude = mapView.centerCoordinate.longitude
+            mapView.gotoLocation(mapView.centerCoordinate)
+        default:
+           selectLocation(location)
+        }
+        calloutView.show()
     }
     
     public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -256,6 +282,10 @@ extension LocationPickerViewController: UISearchBarDelegate {
         calloutView.hide()
         return true
     }
+    
+    public func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
 }
 
 // MARK: - LocationCalloutViewDelegate
@@ -264,10 +294,8 @@ extension LocationPickerViewController: LocationCalloutViewDelegate {
     func locationCalloutViewDidTap() {
         guard let address = calloutView.address else { return }
         let coordinate = mapView.convertPoint(self.ellipsisLayer.position, toCoordinateFromView: mapView)
-        delegate?.locationPickerViewController(self, seletedCoordinate: coordinate, selectedAddress: address)
         let location = LPLocation(coordinate: coordinate, address: address)
-        location.update()
-        navigationController?.dismissViewControllerAnimated(true, completion: nil)
+        selectLocation(location)
     }
 }
 
