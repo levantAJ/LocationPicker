@@ -12,9 +12,9 @@ import Utils
 import Debouncer
 
 public enum SearchResultType: Int {
+    case Remote
     case Instance
     case Recently
-    case Remote
     
     func localizedString() -> String {
         switch self {
@@ -29,6 +29,8 @@ public enum SearchResultType: Int {
     
     func locationImage(row: Int) -> UIImage {
         switch self {
+        case .Remote:
+            return SharedDataSource.locationImage().imageToSize(SharedDataSource.iconSize())
         case .Instance:
             if row == 0 {
                 return SharedDataSource.currentLocationImage().imageToSize(SharedDataSource.iconSize())
@@ -37,8 +39,6 @@ public enum SearchResultType: Int {
             }
         case .Recently:
             return SharedDataSource.recentlyImage().imageToSize(SharedDataSource.iconSize())
-        case .Remote:
-            return SharedDataSource.locationImage().imageToSize(SharedDataSource.iconSize())
         }
     }
 }
@@ -68,11 +68,11 @@ final class LocationPickerViewModel: BaseViewModel {
                 let digits = NSCharacterSet.decimalDigitCharacterSet()
                 if let firstCharacter = address.unicodeScalars.first where                     digits.longCharacterIsMember(firstCharacter.value)  {
                     self.searchByVietBanDo(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
-                    self.searchByGoogle(address)
+                    self.searchByGoogle(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
                     self.searchByFoursquare(address, centerCoor: centerCoor)
                 } else {
                     self.searchByFoursquare(address, centerCoor: centerCoor)
-                    self.searchByGoogle(address)
+                    self.searchByGoogle(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
                     self.searchByVietBanDo(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
                     
                 }
@@ -82,8 +82,8 @@ final class LocationPickerViewModel: BaseViewModel {
         }
     }
     
-    func searchByGoogle(address: String) {
-        GoogleApiService.sharedInstance.searchAddress(address, success: { [weak self] (locations) -> Void in
+    func searchByGoogle(address: String, topLeftCoordinate: CLLocationCoordinate2D, bottomRightCoordinate: CLLocationCoordinate2D) {
+        GoogleApiService.sharedInstance.searchAddress(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate, success: { [weak self] (locations) -> Void in
             self?.locations.value = self?.instancelocationsFromRemoteLocations(locations.takeElements(SharedDataSource.numberOfLocationsPerAPI()))
             self?.handleError(nil)
             }, failure: { [weak self] (error) -> Void in

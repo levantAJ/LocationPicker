@@ -104,7 +104,6 @@ public final class LocationPickerViewController: UIViewController {
     private func setupViewModel() {
         locationPickerViewModel.locations.onChange { [weak self] (value) -> Void in
             self?.tableView.reloadData()
-            self?.tableView.hidden = false
         }
         locationPickerViewModel.address.onChange { [weak self] (value) -> Void in
             guard let weakSelf = self else { return }
@@ -214,24 +213,22 @@ extension LocationPickerViewController: UITableViewDataSource {
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(Constants.LocationPickerViewController.DropMapSeachCell, forIndexPath: indexPath)
-        cell.textLabel?.font = UIFont.systemFontOfSize(15)
+        let cell = tableView.dequeueReusableCellWithIdentifier(Constants.LocationPickerViewController.DropMapSearchCell, forIndexPath: indexPath) as! AddressTableViewCell
         guard let location = locationPickerViewModel.locationAtIndexPath(indexPath) else { return cell }
         switch location.locationType() {
         case .CurrentLocation:
-            cell.textLabel?.text = NSLocalizedString("Your current location", comment: "")
+            cell.nameLabel.text = NSLocalizedString("Your current location", comment: "")
+            cell.addressLabel.text = NSLocalizedString("Current Location", comment: "")
+
         case .Drop:
-            cell.textLabel?.text = NSLocalizedString("Choose on map", comment: "")
+            cell.nameLabel.text = NSLocalizedString("Choose on map", comment: "")
+            cell.addressLabel.text = NSLocalizedString("Pick Location directly", comment: "")
         default:
-            var address = location.address
-            if address == "" {
-                address = location.name
-            }
-            cell.textLabel?.text = address
-            cell.detailTextLabel?.text = location.name
+            cell.nameLabel.text = location.name
+            cell.addressLabel.text = location.address
         }
         if let type = SearchResultType(rawValue: indexPath.section) {
-            cell.imageView?.image = type.locationImage(indexPath.row)
+            cell.iconView.image = type.locationImage(indexPath.row)
         }
         return cell
     }
@@ -244,9 +241,7 @@ extension LocationPickerViewController: UITableViewDelegate {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         searchBar.resignFirstResponder()
         tableView.hidden = true
-        guard let location = locationPickerViewModel.locationAtIndexPath(indexPath) else {
-            return
-        }
+        guard let location = locationPickerViewModel.locationAtIndexPath(indexPath) else { return }
         switch location.locationType() {
         case .CurrentLocation:
             location.latitude = mapView.userLocation.coordinate.latitude
@@ -284,6 +279,9 @@ extension LocationPickerViewController: UISearchBarDelegate {
     }
     
     public func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        if let text = searchBar.text {
+            locationPickerViewModel.searchAddress(text, centerCoor: mapView.centerCoordinate, topLeftCoordinate: mapView.topLeftCoordinate(), bottomRightCoordinate: mapView.bottomRightCoordinate())
+        }
         searchBar.resignFirstResponder()
     }
 }
@@ -305,7 +303,7 @@ extension Constants {
         static let PinAnimatedSpace = CGFloat(15)
         static let PinViewSpace = CGFloat(8.1)
         static let PinViewFootSize = CGSize(width: 10, height: 5)
-        static let DropMapSeachCell = "DropMapSeachCell"
+        static let DropMapSearchCell = "DropMapSearchCell"
         static let Identifier = "LocationPickerViewController"
     }
 }
