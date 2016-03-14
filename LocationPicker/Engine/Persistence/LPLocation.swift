@@ -16,6 +16,7 @@ public enum LPLocationType: Int {
     case Google
     case Foursquare
     case Drop
+    case VietBanDo
 }
 
 public final class LPLocation: Object {
@@ -34,7 +35,7 @@ public final class LPLocation: Object {
     dynamic var address = ""
     dynamic var name = ""
     dynamic var locationTypeRaw = LPLocationType.Unknown.rawValue
-    
+    var locationTypeValue = LPLocationType.Unknown
     public convenience init(coordinate: CLLocationCoordinate2D, address: String) {
         self.init()
         self.latitude = coordinate.latitude
@@ -126,6 +127,7 @@ public extension LPLocation {
         }
         loc.latitude = location["lat"] as! Double
         loc.longitude = location["lng"] as! Double
+        loc.locationTypeValue = .Foursquare
         return loc
     }
     
@@ -137,6 +139,7 @@ public extension LPLocation {
         var locations = [LPLocation]()
         venues.forEach {
             if let location = LPLocation.fromFoursquareJsonObject($0) {
+                location.locationTypeValue = .Foursquare
                 locations.append(location)
             }
         }
@@ -166,6 +169,7 @@ public extension LPLocation {
         if loc.name.isEmpty && loc.address.isEmpty {
             return nil
         }
+        loc.locationTypeValue = .Google
         return loc
     }
     
@@ -174,6 +178,7 @@ public extension LPLocation {
         var locations = [LPLocation]()
         results.forEach {
             if let location = LPLocation.fromGoogleJsonObject($0) {
+                location.locationTypeValue = .Google
                 locations.append(location)
             }
         }
@@ -210,13 +215,19 @@ public extension LPLocation {
             loc.longitude = longitude
         }
         if let name = jsonObject["Name"] as? String {
-            loc.name = name
+            if name.containsString("(Vietbando ID:") {
+                loc.name = name.stringByReplacingOccurrencesOfString("(Vietbando ID:", withString: "")
+                loc.name.removeAtIndex(loc.name.endIndex.advancedBy(-1))
+            } else {
+                loc.name = name
+            }
         } else {
             loc.name = loc.address
         }
         if loc.name.isEmpty && loc.address.isEmpty {
             return nil
         }
+        loc.locationTypeValue = .VietBanDo
         return loc
     }
     
@@ -225,6 +236,7 @@ public extension LPLocation {
         var locations = [LPLocation]()
         list.forEach {
             if let location = LPLocation.fromVietBanDoJsonObject($0) {
+                location.locationTypeValue = .VietBanDo
                 locations.append(location)
             }
         }

@@ -104,7 +104,6 @@ public final class LocationPickerViewController: UIViewController {
     private func setupViewModel() {
         locationPickerViewModel.locations.onChange { [weak self] (value) -> Void in
             self?.tableView.reloadData()
-            self?.tableView.hidden = false
         }
         locationPickerViewModel.address.onChange { [weak self] (value) -> Void in
             guard let weakSelf = self else { return }
@@ -141,6 +140,12 @@ public final class LocationPickerViewController: UIViewController {
         } else {
             currentLocationButton.addRadius()
         }
+    }
+    
+    private func selectLocation(location: LPLocation) {
+        delegate?.locationPickerViewController(self, seletedCoordinate: location.coordinate(), selectedAddress: location.address)
+        location.update()
+        navigationController?.dismissViewControllerAnimated(true, completion: nil)
     }
 }
 
@@ -187,6 +192,10 @@ extension LocationPickerViewController {
     @IBAction func currentLocationButtonTapped(button: UIButton) {
         mapView.setUserTrackingMode(.Follow, animated: true)
     }
+    
+    public func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        searchBar.resignFirstResponder()
+    }
 }
 
 //MARK: table view data source
@@ -204,20 +213,22 @@ extension LocationPickerViewController: UITableViewDataSource {
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(Constants.LocationPickerViewController.DropMapSeachCell, forIndexPath: indexPath)
-        cell.textLabel?.font = UIFont.systemFontOfSize(15)
+        let cell = tableView.dequeueReusableCellWithIdentifier(Constants.LocationPickerViewController.DropMapSearchCell, forIndexPath: indexPath) as! AddressTableViewCell
         guard let location = locationPickerViewModel.locationAtIndexPath(indexPath) else { return cell }
         switch location.locationType() {
         case .CurrentLocation:
-            cell.textLabel?.text = NSLocalizedString("Your current location", comment: "")
+            cell.nameLabel.text = NSLocalizedString("Your current location", comment: "")
+            cell.addressLabel.text = NSLocalizedString("Current Location", comment: "")
+
         case .Drop:
-            cell.textLabel?.text = NSLocalizedString("Choose on map", comment: "")
+            cell.nameLabel.text = NSLocalizedString("Choose on map", comment: "")
+            cell.addressLabel.text = NSLocalizedString("Pick Location directly", comment: "")
         default:
-            cell.textLabel?.text = location.address
-            cell.detailTextLabel?.text = location.name
+            cell.nameLabel.text = location.name
+            cell.addressLabel.text = location.address
         }
         if let type = SearchResultType(rawValue: indexPath.section) {
-            cell.imageView?.image = type.locationImage(indexPath.row)
+            cell.iconView.image = type.locationImage(indexPath.row)
         }
         return cell
     }
@@ -235,13 +246,13 @@ extension LocationPickerViewController: UITableViewDelegate {
         case .CurrentLocation:
             location.latitude = mapView.userLocation.coordinate.latitude
             location.longitude = mapView.userLocation.coordinate.longitude
-            mapView.setUserTrackingMode(.Follow, animated: true)
+            selectLocation(location)
         case .Drop:
             location.latitude = mapView.centerCoordinate.latitude
             location.longitude = mapView.centerCoordinate.longitude
             mapView.gotoLocation(mapView.centerCoordinate)
         default:
-            mapView.gotoLocation(location.coordinate())
+           selectLocation(location)
         }
         calloutView.show()
     }
@@ -266,6 +277,13 @@ extension LocationPickerViewController: UISearchBarDelegate {
         calloutView.hide()
         return true
     }
+    
+    public func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        if let text = searchBar.text {
+            locationPickerViewModel.searchAddress(text, centerCoor: mapView.centerCoordinate, topLeftCoordinate: mapView.topLeftCoordinate(), bottomRightCoordinate: mapView.bottomRightCoordinate())
+        }
+        searchBar.resignFirstResponder()
+    }
 }
 
 // MARK: - LocationCalloutViewDelegate
@@ -274,10 +292,8 @@ extension LocationPickerViewController: LocationCalloutViewDelegate {
     func locationCalloutViewDidTap() {
         guard let address = calloutView.address else { return }
         let coordinate = mapView.convertPoint(self.ellipsisLayer.position, toCoordinateFromView: mapView)
-        delegate?.locationPickerViewController(self, seletedCoordinate: coordinate, selectedAddress: address)
         let location = LPLocation(coordinate: coordinate, address: address)
-        location.update()
-        navigationController?.dismissViewControllerAnimated(true, completion: nil)
+        selectLocation(location)
     }
 }
 
@@ -287,7 +303,7 @@ extension Constants {
         static let PinAnimatedSpace = CGFloat(15)
         static let PinViewSpace = CGFloat(8.1)
         static let PinViewFootSize = CGSize(width: 10, height: 5)
-        static let DropMapSeachCell = "DropMapSeachCell"
+        static let DropMapSearchCell = "DropMapSearchCell"
         static let Identifier = "LocationPickerViewController"
     }
 }

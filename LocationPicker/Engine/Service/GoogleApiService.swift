@@ -14,10 +14,10 @@ import Utils
 public final class GoogleApiService {
     public static let sharedInstance = GoogleApiService()
     
-    public func searchAddress(address: String,
+    public func searchAddress(address: String, topLeftCoordinate: CLLocationCoordinate2D, bottomRightCoordinate: CLLocationCoordinate2D,
         success: ([LPLocation]) -> Void,
         failure: ((NSError?) -> Void)?) {
-            let url = urlWithAddress(address)
+            let url = urlWithAddress(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
             Alamofire.request(.GET,
                 url,
                 parameters: nil,
@@ -95,8 +95,8 @@ public final class GoogleApiService {
             }
     }
     
-    private func urlWithAddress(address: String) -> String {
-        return "\(Constants.GoogleAPI.Place)\(address.removeUnicode())"
+    private func urlWithAddress(address: String, topLeftCoordinate: CLLocationCoordinate2D, bottomRightCoordinate: CLLocationCoordinate2D) -> String {
+        return String(format: Constants.GoogleAPI.Route, arguments: [address.removeUnicode(), topLeftCoordinate.latitude, topLeftCoordinate.longitude, bottomRightCoordinate.latitude, bottomRightCoordinate.longitude])
     }
     
     private func urlWithCoordinate(coor: CLLocationCoordinate2D) -> String {
@@ -127,7 +127,7 @@ public final class GoogleApiService {
 public extension Constants {
     public struct GoogleAPI {
         static let NumberAceptedWaypoints = 6
-        static let Place = "https://maps.googleapis.com/maps/api/geocode/json?address="
+        static let Place = "https://maps.googleapis.com/maps/api/geocode/json?address=%@&bounds=%f,%f|%f,%f"
         static let Address = "http://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=false&language=%@"
         static let Route = "https://maps.googleapis.com/maps/api/directions/json?origin=%f,%f&destination=%f,%f&mode=driving"
         static let RouteHasWaypoints = "https://maps.googleapis.com/maps/api/directions/json?origin=%f,%f&destination=%f,%f&mode=driving&waypoints=%@"
