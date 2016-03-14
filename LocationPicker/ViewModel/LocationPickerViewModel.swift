@@ -46,6 +46,7 @@ public enum SearchResultType: Int {
 final class LocationPickerViewModel: BaseViewModel {
     var locations = Observable(value: OrderedDictionary<SearchResultType, [LPLocation]>())
     var address = Observable(value: "")
+    var firstCharacterIsNumber = false
     private let debouncer = Debouncer(delay: 0.2)
     
     override init() {
@@ -67,15 +68,13 @@ final class LocationPickerViewModel: BaseViewModel {
             if !address.isEmpty {
                 let digits = NSCharacterSet.decimalDigitCharacterSet()
                 if let firstCharacter = address.unicodeScalars.first where                     digits.longCharacterIsMember(firstCharacter.value)  {
-                    self.searchByVietBanDo(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
-                    self.searchByGoogle(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
-                    self.searchByFoursquare(address, centerCoor: centerCoor)
+                    self.firstCharacterIsNumber = true
                 } else {
-                    self.searchByFoursquare(address, centerCoor: centerCoor)
-                    self.searchByGoogle(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
-                    self.searchByVietBanDo(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
-                    
+                    self.firstCharacterIsNumber = false
                 }
+                self.searchByFoursquare(address, centerCoor: centerCoor)
+                self.searchByGoogle(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
+                self.searchByVietBanDo(address, topLeftCoordinate: topLeftCoordinate, bottomRightCoordinate: bottomRightCoordinate)
             } else {
                 self.locations.value = self.instancelocationsFromRemoteLocations([LPLocation]())
             }
@@ -109,6 +108,31 @@ final class LocationPickerViewModel: BaseViewModel {
             })
     }
     
+    func sortResultBySearchMethod(finalResult: [LPLocation]) -> [LPLocation] {
+        var results = [LPLocation]()
+        var resultByGoogle = [LPLocation]()
+        var resultByFourSquare = [LPLocation]()
+        var resultByVietBanDo = [LPLocation]()
+        for result in finalResult {
+            switch result.locationTypeValue {
+            case .Google:
+                resultByGoogle.append(result)
+            case .Foursquare:
+                resultByFourSquare.append(result)
+            case .VietBanDo:
+                resultByVietBanDo.append(result)
+            default:
+                break
+            }
+        }
+        if firstCharacterIsNumber {
+            results = addObjectFromArray(resultByVietBanDo, secondArray: resultByGoogle, thirdArray: resultByFourSquare)
+        } else {
+            results = addObjectFromArray(resultByFourSquare, secondArray: resultByGoogle, thirdArray: resultByVietBanDo)
+        }
+        return results
+    }
+    
     func addressFromCoordinate(coordinate: CLLocationCoordinate2D) {
         GoogleApiService().addressByCoordinate(coordinate, success: { [weak self] (address) -> Void in
             self?.address.value = address
@@ -125,12 +149,26 @@ final class LocationPickerViewModel: BaseViewModel {
             currentRemoteLocations = locations
         }
         var results = OrderedDictionary<SearchResultType, [LPLocation]>()
-        results[SearchResultType.Remote] = currentRemoteLocations + remoteLocations
+        let remoteResults = currentRemoteLocations + remoteLocations
+        results[SearchResultType.Remote] = sortResultBySearchMethod(remoteResults)
         results[SearchResultType.Instance] = LPLocation.instanceLocations()
         results[SearchResultType.Recently] = LPLocation.recentlyLocations() ?? []
         return results
     }
     
+    private func addObjectFromArray(firstArray: [LPLocation], secondArray: [LPLocation], thirdArray: [LPLocation]) -> [LPLocation]{
+        var finalResult = [LPLocation]()
+        for item in firstArray {
+            finalResult.append(item)
+        }
+        for item in secondArray {
+            finalResult.append(item)
+        }
+        for item in thirdArray {
+            finalResult.append(item)
+        }
+        return finalResult
+    }
     func locationAtIndexPath(indexPath: NSIndexPath) -> LPLocation? {
         guard let locations = locations.value, array = locations[indexPath.section] where indexPath.row < array.count else { return nil }
         return array[indexPath.row]
